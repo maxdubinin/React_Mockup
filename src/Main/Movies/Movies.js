@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Container from "../../Container/Container";
 import MoviesBox from "./Movies-box";
 import MoviesSearch from "./Movies-search";
+import Pagination from "./Pagination";
 
 const Movies = () => {
   console.log("start");
@@ -10,6 +11,9 @@ const Movies = () => {
 
   const [searchValue, setSearchValue] = useState("");
   const [searchResult, setSearchResult] = useState([]);
+
+  let [currentPage, setCurrentPage] = useState(1);
+  const [moviesPerPage, setMoviesPerPage] = useState(9);
 
   const fetchData = async () => {
     const response = await fetch(
@@ -49,6 +53,33 @@ const Movies = () => {
     search(searchValue);
   }, [searchValue]);
 
+  // Get current movies
+  const indexOfLastMovies = currentPage * moviesPerPage;
+  const indexOfFirstMovies = indexOfLastMovies - moviesPerPage;
+  const currentMovies = movies.slice(indexOfFirstMovies, indexOfLastMovies);
+
+  // Pagination
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(movies.length / moviesPerPage); i++) {
+    pageNumbers.push(i);
+  }
+
+  const paginateNext = () => {
+    if (currentPage === pageNumbers.length) {
+      return;
+    }
+    setCurrentPage(++currentPage);
+  };
+
+  const paginatePrev = () => {
+    if (currentPage === 1) {
+      return;
+    }
+    setCurrentPage(--currentPage);
+  };
+
+  console.log(movies.length - 1);
+
   return (
     <section className="movies">
       <MoviesSearch
@@ -61,24 +92,29 @@ const Movies = () => {
         <Container>
           {isLoading && <div>Loading... </div>}
           {/*movies && <MoviesBox movies={movies} />*/}
-          {searchResult && (
+
+          <div className="movies-box__row movie-list">
+            {currentMovies.map((movie) => (
+              <MoviesBox movie={movie} key={movie.imdbID} />
+            ))}
+          </div>
+
+          {/* {searchResult && (
             <div className="movies-box__row movie-list">
               {searchResult.map((movie) => (
                 <MoviesBox movie={movie} key={movie.imdbID} />
               ))}
             </div>
-          )}
+          )} */}
 
-          <ul className="pagination">
-            <li className="pagination__page"></li>
-            <li className="pagination__allpages"></li>
-            <li className="pagination__item pagination__item--prev">
-              &lt;Prev
-            </li>
-            <li className="pagination__item pagination__item--next">
-              Next&gt;
-            </li>
-          </ul>
+          <Pagination
+            moviesPerPage={moviesPerPage}
+            totalMovies={movies.length}
+            currentMovies={currentMovies}
+            movies={movies}
+            paginateNext={paginateNext}
+            paginatePrev={paginatePrev}
+          />
         </Container>
       </div>
     </section>
