@@ -1,8 +1,7 @@
 import React from "react";
 
 const Pagination = ({
-  moviesPerPage,
-  totalMovies,
+  currentPage,
   currentMovies,
   movies,
   paginateNext,
@@ -14,7 +13,9 @@ const Pagination = ({
         <li className="pagination__page">
           Items per page {currentMovies.length}
         </li>
-        <li className="pagination__allpages">of {movies.length}</li>
+        <li className="pagination__allpages">
+          {currentPage} of {movies.length}
+        </li>
         <li
           className="pagination__item pagination__item--prev"
           onClick={() => paginatePrev()}

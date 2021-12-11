@@ -13,7 +13,7 @@ const Movies = () => {
   const [searchResult, setSearchResult] = useState([]);
 
   let [currentPage, setCurrentPage] = useState(1);
-  const [moviesPerPage, setMoviesPerPage] = useState(9);
+  const [moviesPerPage] = useState(9);
 
   const fetchData = async () => {
     const response = await fetch(
@@ -35,28 +35,34 @@ const Movies = () => {
     fetchData();
   }, []);
 
-  const handleSearchInputChanges = (e) => {
-    setSearchValue(e.target.value);
-    console.log(searchValue);
-  };
-
-  const search = (e) => {
-    const search =
-      movies &&
-      movies.filter((item) => {
-        return item.Title.toLowerCase().includes(e);
-      });
-    setSearchResult(search);
-  };
-
-  useEffect(() => {
-    search(searchValue);
-  }, [searchValue]);
-
   // Get current movies
   const indexOfLastMovies = currentPage * moviesPerPage;
   const indexOfFirstMovies = indexOfLastMovies - moviesPerPage;
   const currentMovies = movies.slice(indexOfFirstMovies, indexOfLastMovies);
+
+  const handleSearchInputChanges = (e) => {
+    setSearchValue(e.target.value);
+  };
+
+  const search = (e) => {
+    const search =
+      currentMovies &&
+      currentMovies.filter((item) => {
+        return item.Title.toLowerCase().includes(e);
+      });
+    console.log("searh", search);
+    //setSearchResult(search);
+  };
+
+  const getSearch = currentMovies.filter((item) => {
+    return item.Title.toLowerCase().includes(searchValue.toLocaleLowerCase());
+  });
+
+  console.log(currentMovies);
+
+  // useEffect(() => {
+  //   search(searchValue);
+  // }, [searchValue]);
 
   // Pagination
   const pageNumbers = [];
@@ -68,17 +74,19 @@ const Movies = () => {
     if (currentPage === pageNumbers.length) {
       return;
     }
-    setCurrentPage(++currentPage);
+    setCurrentPage((prevPage) => {
+      return prevPage + 1;
+    });
   };
 
   const paginatePrev = () => {
     if (currentPage === 1) {
       return;
     }
-    setCurrentPage(--currentPage);
+    setCurrentPage((prevPage) => {
+      return prevPage - 1;
+    });
   };
-
-  console.log(movies.length - 1);
 
   return (
     <section className="movies">
@@ -93,23 +101,22 @@ const Movies = () => {
           {isLoading && <div>Loading... </div>}
           {/*movies && <MoviesBox movies={movies} />*/}
 
-          <div className="movies-box__row movie-list">
+          {/* <div className="movies-box__row movie-list">
             {currentMovies.map((movie) => (
               <MoviesBox movie={movie} key={movie.imdbID} />
             ))}
-          </div>
+          </div> */}
 
-          {/* {searchResult && (
+          {getSearch && (
             <div className="movies-box__row movie-list">
-              {searchResult.map((movie) => (
+              {getSearch.map((movie) => (
                 <MoviesBox movie={movie} key={movie.imdbID} />
               ))}
             </div>
-          )} */}
+          )}
 
           <Pagination
-            moviesPerPage={moviesPerPage}
-            totalMovies={movies.length}
+            currentPage={currentPage}
             currentMovies={currentMovies}
             movies={movies}
             paginateNext={paginateNext}
