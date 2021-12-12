@@ -50,19 +50,16 @@ const Movies = () => {
       currentMovies.filter((item) => {
         return item.Title.toLowerCase().includes(e);
       });
-    console.log("searh", search);
-    //setSearchResult(search);
+    setSearchResult(search);
   };
-
-  const getSearch = currentMovies.filter((item) => {
-    return item.Title.toLowerCase().includes(searchValue.toLocaleLowerCase());
-  });
-
-  console.log(currentMovies);
 
   // useEffect(() => {
   //   search(searchValue);
   // }, [searchValue]);
+
+  const getSearch = currentMovies.filter((item) => {
+    return item.Title.toLowerCase().includes(searchValue.toLocaleLowerCase());
+  });
 
   // Pagination
   const pageNumbers = [];
@@ -121,6 +118,7 @@ const Movies = () => {
             movies={movies}
             paginateNext={paginateNext}
             paginatePrev={paginatePrev}
+            moviesPerPage={moviesPerPage}
           />
         </Container>
       </div>

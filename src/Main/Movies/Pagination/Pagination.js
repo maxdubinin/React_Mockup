@@ -6,6 +6,7 @@ const Pagination = ({
   movies,
   paginateNext,
   paginatePrev,
+  moviesPerPage,
 }) => {
   return (
     <nav>
@@ -14,7 +15,7 @@ const Pagination = ({
           Items per page {currentMovies.length}
         </li>
         <li className="pagination__allpages">
-          {currentPage} of {movies.length}
+          {currentPage} of {Math.ceil(movies.length / moviesPerPage)}
         </li>
         <li
           className="pagination__item pagination__item--prev"
