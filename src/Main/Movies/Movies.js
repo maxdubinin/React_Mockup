@@ -12,9 +12,35 @@ const Movies = () => {
   const [searchValue, setSearchValue] = useState("");
   const [searchResult, setSearchResult] = useState([]);
 
+  // currentPage всегда должен быть const
   let [currentPage, setCurrentPage] = useState(1);
+  // если нужна какая то константа и ты не собираешся ее менять то лучше создавать просто константу за пределами компонета
   const [moviesPerPage] = useState(9);
 
+  // в целом все правильно, но лучше создать универсальную функцию для fetch в которую ты сможешь передавать любой урл и
+  // которая будет возвращать тебе уже готовый json
+  // Пример отправки POST запроса:
+  // async function postData(url = '', data = {}) {
+  //   // Default options are marked with *
+  //   const response = await fetch(url, {
+  //     method: 'POST', // *GET, POST, PUT, DELETE, etc
+  //     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+  //     credentials: 'same-origin', // include, *same-origin, omit
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //       // 'Content-Type': 'application/x-www-form-urlencoded',
+  //     },
+  //     redirect: 'follow', // manual, *follow, error
+  //     referrerPolicy: 'no-referrer', // no-referrer, *client
+  //     body: JSON.stringify(data) // body data type must match "Content-Type" header
+  //   });
+  //   return await response.json(); // parses JSON response into native JavaScript objects
+  // }
+  //
+  // postData('https://example.com/answer', { answer: 42 })
+  //     .then((data) => {
+  //       console.log(data); // JSON data parsed by `response.json()` call
+  //     });
   const fetchData = async () => {
     const response = await fetch(
       "http://www.omdbapi.com/?apikey=8b47da7b&s=People"
@@ -62,6 +88,7 @@ const Movies = () => {
   });
 
   // Pagination
+  // логику эту лучше запихнуть в компонент пагинации, чтоб все было в одном месте
   const pageNumbers = [];
   for (let i = 1; i <= Math.ceil(movies.length / moviesPerPage); i++) {
     pageNumbers.push(i);
@@ -87,6 +114,10 @@ const Movies = () => {
 
   return (
     <section className="movies">
+      {/*MoviesSearch компонент должен делать новый запрос чтоб вытащить новые данные
+       http://www.omdbapi.com/?apikey=8b47da7b&s=People вот в этой урле People должна быть динамической переменной
+       которая будет передаваться из инпута
+       */}
       <MoviesSearch
         searchValue={searchValue}
         setSearchValue={setSearchValue}
